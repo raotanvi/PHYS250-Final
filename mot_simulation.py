@@ -110,16 +110,9 @@ class MOT:
         self.Fy = self._compute_1d_force(1)
         self.Fz = self._compute_1d_force(2)
 
-        self.interp_Fx = RegularGridInterpolator(
-            (self.v_grid, self.x_grid), self.Fx, bounds_error=False, fill_value=0 #defines a function to make the force values continuous 
-        )
-        self.interp_Fy = RegularGridInterpolator(
-            (self.v_grid, self.x_grid), self.Fy, bounds_error=False, fill_value=0
-        )
-        self.interp_Fz = RegularGridInterpolator(
-            (self.v_grid, self.x_grid), self.Fz, bounds_error=False, fill_value=0
-        )
-
+        self.interp_Fx = RegularGridInterpolator((self.v_grid, self.x_grid), self.Fx, bounds_error=False, fill_value=0) #defines a function to make the force values continuous
+        self.interp_Fy = RegularGridInterpolator((self.v_grid, self.x_grid), self.Fy, bounds_error=False, fill_value=0)
+        self.interp_Fz = RegularGridInterpolator(self.v_grid, self.x_grid), self.Fz, bounds_error=False, fill_value=0)
 
     def _init_atoms(self, x_min = -2, x_max = 2, y_min = -2, y_max = 2, z_min = -2, z_max = 2, vx_min = -0.5, vx_max = 0.5, vy_min = -0.5, vy_max = 0.5, vz_min = -0.5, vz_max = 0.5):
         """

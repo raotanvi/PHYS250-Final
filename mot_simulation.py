@@ -5,8 +5,7 @@ from scipy.interpolate import RegularGridInterpolator
 from matplotlib.animation import FuncAnimation
 
 class MOT:
-    def __init__(self, det=-1.5, s=4.0, alpha=0.5, N_atoms=300, mass=1.0, r_c=1.0, v_c=0.5, dt=0.05,
-                 nsteps=300, grid_extent=5, grid_step=0.2, Fg = 1, Fe = 2, gFg = 0, gFe = 1/2, mu = 1):
+    def __init__(self, det=-1.5, s=4.0, alpha=0.5, N_atoms=300, mass=1.0, r_c=1.0, v_c=0.5, dt=0.05,nsteps=300, grid_extent=5, grid_step=0.2, Fg = 1, Fe = 2, gFg = 0, gFe = 1/2, mu = 1):
 
         # Simulation parameters
         self.det = det #detuning 
@@ -59,10 +58,7 @@ class MOT:
         magnetic field, hamiltonian, and the rate equation)
         """
         #initalizes the laser beams necessary for a 3D MOT
-        self.laserBeams = pylcp.conventional3DMOTBeams(
-            delta=self.det, s=self.s,
-            beam_type=pylcp.infinitePlaneWaveBeam
-        )
+        self.laserBeams = pylcp.conventional3DMOTBeams(delta=self.det, s=self.s,beam_type=pylcp.infinitePlaneWaveBeam)
 
         #initalizes the magnetic field based on the alpha value
         self.magField = pylcp.quadrupoleMagneticField(self.alpha)
@@ -78,13 +74,7 @@ class MOT:
         self.hamiltonian = pylcp.hamiltonian(Hg, He, Bgq, Beq, dijq)
 
         #solves for the system
-        self.rateeq = pylcp.rateeq(
-            self.laserBeams,
-            self.magField,
-            self.hamiltonian,
-            svd_eps=1e-10,
-            include_mag_forces=False
-        )
+        self.rateeq = pylcp.rateeq(self.laserBeams,self.magField,self.hamiltonian,svd_eps=1e-10,include_mag_forces=False)
 
     def _compute_1d_force(self, axis_index):
         """
@@ -161,12 +151,8 @@ class MOT:
         self.velocities_z.append(self.vz_atoms.copy())
 
         # calculates the magnitude of the position and velocity vector (used to identify if the atom is trapped)
-        r = np.sqrt(self.x_atoms**2 +
-                    self.y_atoms**2 +
-                    self.z_atoms**2)
-        vmag = np.sqrt(self.vx_atoms**2 +
-                       self.vy_atoms**2 +
-                       self.vz_atoms**2)
+        r = np.sqrt(self.x_atoms**2 + self.y_atoms**2 + self.z_atoms**2)
+        vmag = np.sqrt(self.vx_atoms**2 + self.vy_atoms**2 + self.vz_atoms**2)
 
         # identifies if the atom has been trapped and then appends the count to the total 
         trapped = np.logical_and(r < self.r_c, vmag < self.v_c)
@@ -195,20 +181,11 @@ class MOT:
     def plot_z_vz(self):
         fig, ax = plt.subplots(figsize=(6, 5))
 
-        im = ax.imshow(
-            self.Fz,
-            extent=(self.x_grid.min(), self.x_grid.max(),
-                    self.v_grid.min(), self.v_grid.max()),
-            origin='lower',
-            aspect='auto',
-            cmap='RdBu_r',
-            vmin=-0.3,
-            vmax=0.3
-        )
+        im = ax.imshow(self.Fz,extent=(self.x_grid.min(), self.x_grid.max(), self.v_grid.min(), self.v_grid.max()),
+            origin='lower',aspect='auto',cmap='RdBu_r',vmin=-0.3,vmax=0.3)
 
         for i in range(self.N_atoms):
-            ax.plot(self.positions_z[:, i], self.velocities_z[:, i],
-                    lw=0.6, alpha=0.6)
+            ax.plot(self.positions_z[:, i], self.velocities_z[:, i], lw=0.6, alpha=0.6)
 
         ax.set_title("z–vz Trajectories", fontsize=16)
         ax.set_xlabel("z", fontsize=14)
@@ -226,20 +203,11 @@ class MOT:
     def plot_x_vx(self):
         fig, ax = plt.subplots(figsize=(6, 5))
 
-        im = ax.imshow(
-            self.Fx,
-            extent=(self.x_grid.min(), self.x_grid.max(),
-                    self.v_grid.min(), self.v_grid.max()),
-            origin='lower',
-            aspect='auto',
-            cmap='RdBu_r',
-            vmin=-0.3,
-            vmax=0.3
-        )
+        im = ax.imshow( self.Fx, extent=(self.x_grid.min(), self.x_grid.max(), self.v_grid.min(), self.v_grid.max()),
+            origin='lower', aspect='auto', cmap='RdBu_r', vmin=-0.3, vmax=0.3)
 
         for i in range(self.N_atoms):
-            ax.plot(self.positions_x[:, i], self.velocities_x[:, i],
-                    lw=0.6, alpha=0.6)
+            ax.plot(self.positions_x[:, i], self.velocities_x[:, i], lw=0.6, alpha=0.6)
 
         ax.set_title("x–vx Trajectories", fontsize=16)
         ax.set_xlabel("x", fontsize=14)
@@ -256,20 +224,11 @@ class MOT:
     def plot_y_vy(self):
         fig, ax = plt.subplots(figsize=(6, 5))
 
-        im = ax.imshow(
-            self.Fy,
-            extent=(self.x_grid.min(), self.x_grid.max(),
-                    self.v_grid.min(), self.v_grid.max()),
-            origin='lower',
-            aspect='auto',
-            cmap='RdBu_r',
-            vmin=-0.3,
-            vmax=0.3
-        )
+        im = ax.imshow(self.Fy, extent=(self.x_grid.min(), self.x_grid.max(),self.v_grid.min(), self.v_grid.max()),
+            origin='lower',aspect='auto',cmap='RdBu_r',vmin=-0.3, vmax=0.3)
 
         for i in range(self.N_atoms):
-            ax.plot(self.positions_y[:, i], self.velocities_y[:, i],
-                    lw=0.6, alpha=0.6)
+            ax.plot(self.positions_y[:, i], self.velocities_y[:, i],lw=0.6, alpha=0.6)
 
         ax.set_title("y–vy Trajectories", fontsize=16)
         ax.set_xlabel("y", fontsize=14)
@@ -286,8 +245,7 @@ class MOT:
     def plot_trapped(self):
         fig, ax = plt.subplots(figsize=(6, 4))
 
-        ax.plot(self.times, self.trapped_counts,
-                lw=2, color='darkgreen')
+        ax.plot(self.times, self.trapped_counts, lw=2, color='darkgreen')
 
         ax.set_xlabel("Time (s)", fontsize=14)
         ax.set_ylabel("Atoms Trapped", fontsize=14)
@@ -299,15 +257,10 @@ class MOT:
         plt.show()
 
     def animate_3D(self):
-        from matplotlib.animation import FuncAnimation
         fig = plt.figure(figsize=(7,7))
         ax = fig.add_subplot(111, projection='3d')
     
-        scat = ax.scatter(
-            self.positions_x[0],
-            self.positions_y[0],
-            self.positions_z[0],
-        )
+        scat = ax.scatter(self.positions_x[0], self.positions_y[0],self.positions_z[0])
     
         ax.set_xlim(self.positions_x.min(), self.positions_x.max())
         ax.set_ylim(self.positions_y.min(), self.positions_y.max())
@@ -315,21 +268,11 @@ class MOT:
         ax.set_title("Trapping of particles over time", fontsize=20) 
     
         def update(frame):
-            scat._offsets3d = (
-                self.positions_x[frame],
-                self.positions_y[frame],
-                self.positions_z[frame]
-            )
+            scat._offsets3d = (self.positions_x[frame],self.positions_y[frame],self.positions_z[frame])
             ax.set_title(f"Frame {frame}", fontsize=16)
-            return scat,
+            return scat
     
-        ani = FuncAnimation(
-            fig,
-            update,
-            frames=len(self.positions_x),
-            interval=60,
-            blit=False
-        )
+        ani = FuncAnimation(fig,update,frames=len(self.positions_x),interval=60,blit=False)
     
         ani.save("mot_animation.gif", writer="pillow")
     

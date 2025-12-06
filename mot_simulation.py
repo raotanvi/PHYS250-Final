@@ -25,8 +25,8 @@ class MOT:
         self.mu = mu
 
         # use mesh grid to keep track of positions and velocities 
-        self.x_grid = np.arange(-grid_extent, grid_extent + grid_step, grid_step)
-        self.v_grid = np.arange(-grid_extent, grid_extent + grid_step, grid_step)
+        self.x_grid = np.arange(-grid_extent, grid_extent+ grid_step, grid_step)
+        self.v_grid = np.arange(-grid_extent, grid_extent+ grid_step, grid_step)
         self.X, self.V = np.meshgrid(self.x_grid, self.v_grid)
 
         #initializes all the necessary pylcp options 
@@ -128,18 +128,18 @@ class MOT:
 
         # calculates the acceleration in each direction
         ax = Fx_now/self.mass
-        ay = Fy_now / self.mass
-        az = Fz_now / self.mass
+        ay = Fy_now/self.mass
+        az = Fz_now/self.mass
 
         # updates the velocity using v = v_0 + at
-        self.vx_atoms += ax * self.dt
-        self.vy_atoms += ay * self.dt
-        self.vz_atoms += az * self.dt
+        self.vx_atoms+= ax * self.dt
+        self.vy_atoms+= ay * self.dt
+        self.vz_atoms+= az * self.dt
 
         # updates the position using x = x_0 + vt
-        self.x_atoms += self.vx_atoms * self.dt
-        self.y_atoms += self.vy_atoms * self.dt
-        self.z_atoms += self.vz_atoms * self.dt
+        self.x_atoms+= self.vx_atoms * self.dt
+        self.y_atoms+= self.vy_atoms * self.dt
+        self.z_atoms+= self.vz_atoms * self.dt
 
         # stores final values
         self.positions_x.append(self.x_atoms.copy())
@@ -151,11 +151,11 @@ class MOT:
         self.velocities_z.append(self.vz_atoms.copy())
 
         # calculates the magnitude of the position and velocity vector (used to identify if the atom is trapped)
-        r = np.sqrt(self.x_atoms**2 + self.y_atoms**2 + self.z_atoms**2)
-        vmag = np.sqrt(self.vx_atoms**2 + self.vy_atoms**2 + self.vz_atoms**2)
+        r = np.sqrt(self.x_atoms**2+ self.y_atoms**2+ self.z_atoms**2)
+        vmag = np.sqrt(self.vx_atoms**2+ self.vy_atoms**2+ self.vz_atoms**2)
 
         # identifies if the atom has been trapped and then appends the count to the total 
-        trapped = np.logical_and(r < self.r_c, vmag < self.v_c)
+        trapped = np.logical_and(r<self.r_c, vmag<self.v_c)
         self.trapped_counts.append(np.sum(trapped))
 
 
@@ -245,7 +245,7 @@ class MOT:
     def plot_trapped(self):
         fig, ax = plt.subplots(figsize=(6, 4))
 
-        ax.plot(self.times, self.trapped_counts, lw=2, color='darkgreen')
+        ax.plot(self.times, self.trapped_counts, lw=2,color='darkgreen')
 
         ax.set_xlabel("Time (s)", fontsize=14)
         ax.set_ylabel("Atoms Trapped", fontsize=14)
@@ -259,13 +259,12 @@ class MOT:
     def animate_3D(self):
         fig = plt.figure(figsize=(7,7))
         ax = fig.add_subplot(111, projection='3d')
-    
         scat = ax.scatter(self.positions_x[0], self.positions_y[0],self.positions_z[0])
     
         ax.set_xlim(self.positions_x.min(), self.positions_x.max())
         ax.set_ylim(self.positions_y.min(), self.positions_y.max())
         ax.set_zlim(self.positions_z.min(), self.positions_z.max())
-        ax.set_title("Trapping of particles over time", fontsize=20) 
+        ax.set_title("Trapping of particles over time",fontsize=20) 
     
         def update(frame):
             scat._offsets3d = (self.positions_x[frame],self.positions_y[frame],self.positions_z[frame])

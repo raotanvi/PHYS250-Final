@@ -68,7 +68,7 @@ class MOT:
         He, Beq = pylcp.hamiltonians.singleF(F=self.Fe, gF=self.gFe, muB=self.mu)
 
         #calcluates the transition amplitude for given states
-        dijq = pylcp.hamiltonians.dqij_two_bare_hyperfine(self.Fg, self.Fe)
+        dijq = pylcp.hamiltonians.dqij_two_bare_hyperfine(self.Fg,self.Fe)
 
         #constructs the full hamiltonian with necessary operators 
         self.hamiltonian = pylcp.hamiltonian(Hg, He, Bgq, Beq, dijq)
@@ -80,15 +80,15 @@ class MOT:
         """
         Computes the force profile at steady state for a given axis
         """
-        coords = [np.zeros(self.X.shape), np.zeros(self.X.shape), np.zeros(self.X.shape)]
-        vels   = [np.zeros(self.V.shape), np.zeros(self.V.shape), np.zeros(self.V.shape)]
+        coords = [np.zeros(self.X.shape),np.zeros(self.X.shape),np.zeros(self.X.shape)]
+        vels   = [np.zeros(self.V.shape),np.zeros(self.V.shape),np.zeros(self.V.shape)]
 
         coords[axis_index] = self.X
         vels[axis_index]   = self.V
 
         axis_name = ["Fx", "Fy", "Fz"][axis_index]
 
-        self.rateeq.generate_force_profile(coords, vels, name=axis_name) #calculates the steady state value for the given axis and stores in the rateeq dictionary
+        self.rateeq.generate_force_profile(coords, vels,name=axis_name) #calculates the steady state value for the given axis and stores in the rateeq dictionary
         return self.rateeq.profile[axis_name].F[axis_index] # returns the steady state value of the force for the given axis
 
 
@@ -102,7 +102,7 @@ class MOT:
 
         self.interp_Fx = RegularGridInterpolator((self.v_grid, self.x_grid), self.Fx, bounds_error=False, fill_value=0) #defines a function to make the force values continuous
         self.interp_Fy = RegularGridInterpolator((self.v_grid, self.x_grid), self.Fy, bounds_error=False, fill_value=0)
-        self.interp_Fz = RegularGridInterpolator(self.v_grid, self.x_grid), self.Fz, bounds_error=False, fill_value=0)
+        self.interp_Fz = RegularGridInterpolator((self.v_grid, self.x_grid), self.Fz, bounds_error=False, fill_value=0)
 
     def _init_atoms(self, x_min = -2, x_max = 2, y_min = -2, y_max = 2, z_min = -2, z_max = 2, vx_min = -0.5, vx_max = 0.5, vy_min = -0.5, vy_max = 0.5, vz_min = -0.5, vz_max = 0.5):
         """
@@ -127,7 +127,7 @@ class MOT:
         Fz_now = self.interp_Fz(np.column_stack((self.vz_atoms, self.z_atoms)))
 
         # calculates the acceleration in each direction
-        ax = Fx_now / self.mass
+        ax = Fx_now/self.mass
         ay = Fy_now / self.mass
         az = Fz_now / self.mass
 
@@ -161,7 +161,7 @@ class MOT:
 
     def run(self):
         """
-        runs the simulation by completeing as many steps as initally initialized (default is 150)
+        runs the simulation by completeing as many steps as initally initialized
         """
         for step in range(self.nsteps):
             self.step()
